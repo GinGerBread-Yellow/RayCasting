@@ -33,10 +33,15 @@ public:
 
   virtual bool intersect( const Ray& r , Hit& h , float tmin ) {
 		  bool flag = false;
+      // cerr << "ret =";
       for (int i = 0; i < size; i++) {
-        if(objects[i])
-          flag |= objects[i]->intersect(r, h, tmin);
+        if(objects[i]) {
+          bool tmp = objects[i]->intersect(r, h, tmin);
+          flag |= tmp;
+          // cerr << tmp;
+        }
       }
+      // cerr << '\n';
       return flag;
    }
 	

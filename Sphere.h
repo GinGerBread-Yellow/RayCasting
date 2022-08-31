@@ -17,29 +17,31 @@ public:
 	}
 
 	Sphere( Vector3f center , float radius , Material* material ):Object3D(material), center(center), radius(radius) {
-
+		// assert(this->center == center);
+		// assert(this->radius == radius);
+		// cerr << "init sphere with " << center[0] << ',' <<
+		// 	center[1] << ',' << center[2] << ' ' << radius << '\n';
 	}
 	
 
 	~Sphere(){}
 
 	virtual bool intersect( const Ray& r , Hit& h , float tmin){
-
-		Vector3f orig = r.getOrigin();
+		Vector3f orig = r.getOrigin() - center;
 		Vector3f dir = r.getDirection();
 		float a = dir.absSquared();
-		float b = 2 * Vector3f::dot(orig, dir);
+		float b = 2.f * Vector3f::dot(orig, dir);
 		float c = orig.absSquared() - radius*radius;
 
-		float det = b * b - 4 * a * c;
+		float det = b * b - 4.f * a * c;
 
 		if(det < 0) return false;
 
 		float d = sqrt(det);
-		float t1 = (-b - d) / (2*a);
-		float t2 = (-b + d) / (2*a);
+		float t1 = (-b - d) / (2.f*a);
+		float t2 = (-b + d) / (2.f*a);
 
-		if(t1 >= FLT_MAX) return false;
+		// if(t1 >= FLT_MAX) return false;
 		if(t1 >= h.getT()) return true;
 
 		// t1 <= t2
@@ -54,7 +56,8 @@ public:
 		Vector3f hitpoint = orig + t*dir;
 		Vector3f normal = (hitpoint - center).normalized();
 		h.set(t, material, normal);
-
+		// cerr << "hitpoint " << hitpoint[0] << ","<< hitpoint[1] << ","
+		// 	<< hitpoint[2] << "," << t1 << ' ' << t2 << '\n';
 		return true;
 	}
 

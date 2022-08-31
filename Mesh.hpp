@@ -5,6 +5,7 @@
 #include "Triangle.h"
 #include "Vector2f.h"
 #include "Vector3f.h"
+#include "util.h"
 //by default counterclockwise winding is front face
 struct Trig{
   Trig(){x[0]=0;x[1]=0;x[2]=0;}
