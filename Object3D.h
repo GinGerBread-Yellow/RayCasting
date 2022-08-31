@@ -10,7 +10,8 @@ class Object3D
 public:
 	Object3D()
 	{
-		material = NULL;
+		// material = NULL;
+		material = new Material(Vector3f(0.5f, 0.5f, 0.5f));
 	}
 	virtual ~Object3D(){}
 

@@ -2,3 +2,5 @@
 *.dll
 .DS_Store
 a4
+demo.bmp
+output/*

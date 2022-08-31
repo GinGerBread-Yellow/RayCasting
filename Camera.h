@@ -28,12 +28,20 @@ protected:
 class PerspectiveCamera: public Camera
 {
 public:
-	PerspectiveCamera(const Vector3f& center, const Vector3f& direction,const Vector3f& up , float angle){
-
+	PerspectiveCamera(const Vector3f& center, const Vector3f& direction,const Vector3f& up , float angle): FoV(angle) {
+		this->center = center;
+		this->direction = direction;
+		Vector3f u = Vector3f::cross(direction, up);
+		Vector3f v = Vector3f::cross(u, direction);
+		this->horizontal = u;
+		this->up = v;
 	}
 
 	virtual Ray generateRay( const Vector2f& point){
-		
+
+		Vector3f orig = center;
+		Vector3f dir = direction + point[0]*horizontal + point[1]*up;
+		return Ray(orig, dir);
 	}
 
 	virtual float getTMin() const { 
@@ -41,6 +49,8 @@ public:
 	}
 
 private:
+
+	float FoV;
 
 };
 
