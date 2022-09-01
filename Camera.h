@@ -36,7 +36,7 @@ public:
 		Vector3f v = Vector3f::cross(u, direction).normalized();
 		this->horizontal = u;
 		this->up = v;
-		this->aspect = 1.f/tan(angle/2.f);
+		this->dist = 1.f/tan(angle/2.f);
 	}
 
 	virtual Ray generateRay( const Vector2f& point){
@@ -44,9 +44,9 @@ public:
 			&& point.y() >= -1.f && point.y() <= 1.f);
 
 		Vector3f orig = center;
-		Vector3f dir = aspect * direction 
-			+ point[0]*horizontal 
-			+ point[1]*up;
+		Vector3f dir = dist * direction 
+			+ point[0]*horizontal
+			+ point[1]*up; // need to * aspect
 
 		return Ray(orig, dir);
 	}
@@ -56,8 +56,8 @@ public:
 	}
 
 private:
-
-	float aspect;
+	float dist;
+	// float aspect; <= 1 for square 
 
 };
 

@@ -22,12 +22,11 @@ public:
 		if(product == 0) return false;
 		float t = - (offset + Vector3f::dot(normal, r.getOrigin())) / product;
 
-		if( t < tmin) 
-			return false;
-		else if (t < h.getT()) {
-			h.set(t, material, normal);
+		if (t >= tmin && t < h.getT()) {
+			h.set(t, material, normal.normalized());
+			return true;
 		}
-		return true;
+		return false;
 
 	}
 

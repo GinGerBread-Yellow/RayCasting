@@ -3,6 +3,8 @@
 
 #include <cassert>
 #include <vecmath.h>
+#include <iostream>
+#include "util.h"
 
 #include "Ray.h"
 #include "Hit.h"
@@ -32,14 +34,35 @@ public:
 
   Vector3f Shade( const Ray& ray, const Hit& hit,
                   const Vector3f& dirToLight, const Vector3f& lightColor ) {
+    // find R
+    // assert(Vector3f::dot(ray.getDirection(), hit.getNormal()) < 0);
+    float nDotd = Vector3f::dot(ray.getDirection(), hit.getNormal());
+    Vector3f reflect = (ray.getDirection() 
+                          - 2.f * nDotd * hit.getNormal()).normalized();
 
-    return Vector3f(1,1,1) ; 
+#define clamp(x) (max(0.f, x)) // (max(0.f, min(1.f, x)))
+
+    float lDotr = clamp(Vector3f::dot(dirToLight, reflect));
+    float lDotn = clamp(Vector3f::dot(dirToLight, hit.getNormal()));
+    
+    Vector3f dif = lDotn * diffuseColor * lightColor;
+    Vector3f spec = pow(lDotr, shininess) * specularColor * lightColor;
+    Vector3f color = dif + spec;
+
+
+    // cerr << "lr, ln:" << lr << ',' << ln << '\n' 
+    //   <<"diffuse " << dif << '\n'
+    //   << "specularColor:" << spec << '\n'
+    //   << "color: " << color << '\n';
+    return color; 
 		
   }
 
   void loadTexture(const char * filename){
     t.load(filename);
   }
+
+
  protected:
   Vector3f diffuseColor;
   Vector3f specularColor;

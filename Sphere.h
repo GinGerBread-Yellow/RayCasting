@@ -42,7 +42,6 @@ public:
 		float t2 = (-b + d) / (2.f*a);
 
 		// if(t1 >= FLT_MAX) return false;
-		if(t1 >= h.getT()) return true;
 
 		// t1 <= t2
 		float t;
@@ -53,7 +52,7 @@ public:
 		} else {
 			return false;
 		}
-		Vector3f hitpoint = orig + t*dir;
+		Vector3f hitpoint = r.pointAtParameter(t);
 		Vector3f normal = (hitpoint - center).normalized();
 		h.set(t, material, normal);
 		// cerr << "hitpoint " << hitpoint[0] << ","<< hitpoint[1] << ","

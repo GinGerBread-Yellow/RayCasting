@@ -35,9 +35,9 @@ public:
 		Vector3f param = M_inv * (a - ray.getOrigin());
 
 		// validate
-		if(isConvex(param[0], param[1])) {
-			if(param[2] >= tmin && param[2] < hit.getT())
-				hit.set(param[2], material, Vector3f::cross(a_b, a_c));
+		if(isConvex(param[0], param[1]) 
+				&& param[2] >= tmin && param[2] < hit.getT()) {
+			hit.set(param[2], material, Vector3f::cross(a_b, a_c).normalized());
 			return true;
 		}
 		return false;
@@ -51,7 +51,9 @@ protected:
 	Vector3f a_c;
 
 	inline bool isConvex(float beta, float gamma) {
-		return beta >= 0 && beta <= 1 && gamma >= 0 && gamma <= 1 && beta + gamma <= 1;
+		return (beta >= 0 && beta <= 1 
+			&& gamma >= 0 && gamma <= 1 
+			&& beta + gamma <= 1);
 	}
 
 };

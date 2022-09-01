@@ -42,41 +42,38 @@ int main( int argc, char* argv[] )
   SceneParser scene(config.inputfile);
 
   Image image( config.width , config.height );
+  image.SetAllPixels(scene.getBackgroundColor());
 
   Camera *camera = scene.getCamera();
   Group *group = scene.getGroup();
   float tmin = camera->getTMin();
 
-  float deltaX = (float)2/(config.width-1);
-  float deltaY = (float)2/(config.height-1); 
+  float deltaX = (float)2/(config.width);
+  float deltaY = (float)2/(config.height); 
   for (int i = 0; i < config.width; i++) {
     for (int j = 0; j < config.height; j++) {
 
-      Vector2f pixel(deltaX*i-1, deltaY*j-1);
+      Vector2f pixel(deltaX*(0.5+i)-1, deltaY*(0.5+j)-1);
       Ray ray = camera->generateRay(pixel);
-      // cerr << "ray :" << ray.getDirection()[0] << ' '
-      //   << ray.getDirection()[1] << ' '
-      //   << ray.getDirection()[2] << '\n';
-
-
       Hit hit;
-      Vector3f pixelColor = scene.getAmbientLight();
+      
       if (group->intersect(ray, hit, tmin)) {
         // shading
-        // Vector3f norm = hit.getNormal();
+        Vector3f p_hit = ray.pointAtParameter(hit.getT());
         Material *material = hit.getMaterial();
-        pixelColor = material->getDiffuseColor();
+        Vector3f pixelColor = scene.getAmbientLight() * material->getDiffuseColor();
 
-        // for (int l = 0, nlight = scene.getNumLights(); l < nlight; l++) {
-        //   Light* light = scene.getLight(l);
-        //   Vector3f dir2Light, lightColor, p = ray.getOrigin()+hit.getT()*ray.getDirection();
-        //   float dist;
-        //   light->getIllumination(p,dir2Light, lightColor, dist);
-        //   pixelColor += texture->Shade(ray, hit, dir2Light, lightColor);
-        // }
+        for (int l = 0, nlight = scene.getNumLights(); l < nlight; l++) {
+          Light* light = scene.getLight(l);
+          Vector3f dirToLight, lightColor;
+          float dist;
+          light->getIllumination(p_hit, dirToLight, lightColor, dist);
+          Vector3f shading = material->Shade(ray, hit, dirToLight, lightColor);
+          pixelColor += shading;
+        }
 
+        image.SetPixel( i, j, pixelColor );
       }
-      image.SetPixel( i, j, pixelColor );
     }
   }
   image.SaveImage(config.outputfile);
