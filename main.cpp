@@ -13,7 +13,9 @@
 
 using namespace std;
 
-float clampedDepth ( float depthInput, float depthMin , float depthMax);
+float clampedDepth ( float depthInput, float depthMin , float depthMax) {
+  return max(depthMin, min(depthMax, depthInput));
+}
 
 struct Config {
   char *inputfile = 0;
@@ -71,7 +73,6 @@ int main( int argc, char* argv[] )
           Vector3f shading = material->Shade(ray, hit, dirToLight, lightColor);
           pixelColor += shading;
         }
-
         image.SetPixel( i, j, pixelColor );
       }
     }
@@ -130,6 +131,5 @@ void parseConfig(int argc, char *argv[], struct Config& config ) {
     << "\tdmax = " << config.dmax << '\n';
 
 }
-
 
 
