@@ -27,8 +27,12 @@ public:
 	~Sphere(){}
 
 	virtual bool intersect( const Ray& r , Hit& h , float tmin){
+
+
 		Vector3f orig = r.getOrigin() - center;
 		Vector3f dir = r.getDirection();
+
+		// solving quadratic function
 		float a = dir.absSquared();
 		float b = 2.f * Vector3f::dot(orig, dir);
 		float c = orig.absSquared() - radius*radius;
@@ -41,8 +45,6 @@ public:
 		float t1 = (-b - d) / (2.f*a);
 		float t2 = (-b + d) / (2.f*a);
 
-		// if(t1 >= FLT_MAX) return false;
-
 		// t1 <= t2
 		float t;
 		if(t1 >= tmin && t1 < h.getT()) {
@@ -52,11 +54,10 @@ public:
 		} else {
 			return false;
 		}
+		// update hit
 		Vector3f hitpoint = r.pointAtParameter(t);
 		Vector3f normal = (hitpoint - center).normalized();
 		h.set(t, material, normal);
-		// cerr << "hitpoint " << hitpoint[0] << ","<< hitpoint[1] << ","
-		// 	<< hitpoint[2] << "," << t1 << ' ' << t2 << '\n';
 		return true;
 	}
 

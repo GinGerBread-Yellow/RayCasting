@@ -20,7 +20,9 @@ public:
   }
   ~Transform(){
   }
-  virtual bool intersect( const Ray& r , Hit& h , float tmin){
+  virtual bool intersect( const Ray& r , Hit& h , float tmin) {
+
+    // transfrom to local coordinate;
     Vector4f orig(r.getOrigin(), 1.f);
     Vector4f dir(r.getDirection(), 0.f);
     Ray localRay((M_world2obj * orig).xyz(), (M_world2obj * dir).xyz() );

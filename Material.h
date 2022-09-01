@@ -34,20 +34,36 @@ public:
 
   Vector3f Shade( const Ray& ray, const Hit& hit,
                   const Vector3f& dirToLight, const Vector3f& lightColor ) {
+
+#define clamp(x) (max(0.f, x)) // (max(0.f, min(1.f, x)))
+
+    Vector3f diffuse;
+    Vector3f specular;
     // find R
     // assert(Vector3f::dot(ray.getDirection(), hit.getNormal()) < 0);
     float nDotd = Vector3f::dot(ray.getDirection(), hit.getNormal());
     Vector3f reflect = (ray.getDirection() 
                           - 2.f * nDotd * hit.getNormal()).normalized();
 
-#define clamp(x) (max(0.f, x)) // (max(0.f, min(1.f, x)))
 
-    float lDotr = clamp(Vector3f::dot(dirToLight, reflect));
+
+
+    // diffusion color 
     float lDotn = clamp(Vector3f::dot(dirToLight, hit.getNormal()));
-    
-    Vector3f dif = lDotn * diffuseColor * lightColor;
-    Vector3f spec = pow(lDotr, shininess) * specularColor * lightColor;
-    Vector3f color = dif + spec;
+    if(t.valid()) {
+      // texture
+      Vector3f textureColor = t(hit.texCoord[0], hit.texCoord[1]);
+      diffuse = lDotn * textureColor * lightColor;
+      diffuseColor = textureColor;
+    } else
+      diffuse = lDotn * diffuseColor * lightColor;
+
+    // specular color
+    float lDotr = clamp(Vector3f::dot(dirToLight, reflect));
+    specular = pow(lDotr, shininess) * specularColor * lightColor;
+
+    // net color
+    Vector3f color = diffuse + specular;
 
 
     // cerr << "lr, ln:" << lr << ',' << ln << '\n' 
